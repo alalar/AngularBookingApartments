@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+.alert {
+    padding: 0px 0px 0px 20px; 
+    margin-bottom: 0px; 
+}
+.form-group {
+     margin-bottom: 2px; 
+}
+label {
+     margin-bottom: 0px; 
+ }
+
+.modal-body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+.modal {
+    background:rgba(0,0,0,0.6);
+    z-index:2000;
+}
+
+body {
+    padding-top: 65px;
+}

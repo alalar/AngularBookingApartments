@@ -1,0 +1,116 @@
+<style>
+    .form-control {height: auto;}
+</style>
+<div  (click)="onContainerClicked($event)" class="modal fade " tabindex="-1" [ngClass]="{'in': visibleAnimate,'out': !visibleAnimate}"
+       [ngStyle]="{'display': visible ? 'block' : 'none'}">
+    <div class="modal-dialog">
+      <div class="modal-content" >
+        <div class="modal-header" >
+          <button type="button" class="close" data-dismiss="modal" (click)="hide()">&times;</button>  
+        </div>
+        <div class="modal-body">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <span *ngIf="originalApartmentName==null" >
+                        Creating new apartment
+                    </span>
+                    <span *ngIf="originalApartmentName!=null" >
+                        Editing apartment
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <form [formGroup]="apartmentForm" (submit)="saveApartment()" novalidate >
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': apartmentForm.controls.name.valid,'has-error':!apartmentForm.controls.name.valid}">
+                            <label class="control-label" for="name">Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-key"></i>
+                                </span>
+                                
+                                <input class="form-control" formControlName="name" placeholder="enter a name" autofocus>
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': apartmentForm.controls.name.valid,'glyphicon-remove':!apartmentForm.controls.name.valid}"></span>
+                            </div>
+                            <div *ngIf="apartmentForm.controls.name.hasError('required')" class="alert alert-danger ">You must include a name.</div>
+                            <div *ngIf="apartmentForm.controls.name.hasError('minlength')" class="alert alert-danger ">Name must be at least 3 characters long.</div>
+                            <div *ngIf="apartmentForm.controls.name.hasError('maxlength')" class="alert alert-danger ">Name cannot exceed 50 characters.</div>   
+                            <div *ngIf="apartmentForm.controls.name.hasError('CheckingDuplicatedItem')" class="alert alert-info ">Checking if username exists <span class="glyphicon glyphicon-refresh"></span></div>            
+                            <div *ngIf="apartmentForm.controls.name.hasError('DuplicatedItem') && apartmentForm.controls.name.value" class="alert alert-danger ">apartment name already exists</div>
+                        </div>
+
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': apartmentForm.controls.numBedroom.valid,'has-error':!apartmentForm.controls.numBedroom.valid}">
+                            <label class="control-label" for="numBedroom">bedroom</label>
+                            <div class="input-group">
+                              
+                                <span class="input-group-addon">
+                                   <i class="fa fa-bed"></i>
+                                </span>
+                                <div class="form-control">
+                                    <ng-container  *ngFor='let value of [1,2,3,4,5]'>
+                                        <label class="radio-inline">
+                                            <input type="radio" formControlName="numBedroom" name="numBedroom" value={{value}}
+                                                [checked]="apartment && apartment.numBedroom==value">{{value}}
+                                        </label>
+                                    </ng-container>
+                                </div>
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': apartmentForm.controls.numBedroom.valid,'glyphicon-remove':!apartmentForm.controls.numBedroom.valid}"></span>
+                            </div>
+                            <div *ngIf="apartmentForm.controls.numBedroom.hasError('required')" class="alert alert-danger ">You must select the number of rooms.</div>
+                            <div *ngIf="apartmentForm.controls.numBedroom.hasError('number')" class="alert alert-danger ">You must enter a number between 1 and 5</div>
+                        </div>
+
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': apartmentForm.controls.floor.valid,'has-error':!apartmentForm.controls.floor.valid}">
+                            <label class="control-label" for="floor">floor</label>
+                            <div class="input-group">
+                              
+                                <span class="input-group-addon">
+                                    <i class="fa fa-building"></i>
+                                </span>
+                                <div class="form-control">
+                                    <ng-container  *ngFor='let floorOpt of [1,2,3,4]'>
+                                        <label class="radio-inline">
+                                            <input type="radio" formControlName="floor" name="floor" value={{floorOpt}}
+                                                [checked]="apartment && apartment.floor==floorOpt">{{floorOpt}}
+                                        </label>
+                                    </ng-container>
+                                </div>
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': apartmentForm.controls.floor.valid,'glyphicon-remove':!apartmentForm.controls.floor.valid}"></span>
+                            </div>
+                            <div *ngIf="apartmentForm.controls.floor.hasError('required')" class="alert alert-danger ">You must select the floor.</div>
+                            <div *ngIf="apartmentForm.controls.floor.hasError('number')" class="alert alert-danger ">You must enter a number between 1 and 4</div>
+                        </div>
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': apartmentForm.controls.apartmentType.valid,'has-error':!apartmentForm.controls.apartmentType.valid}">
+                            <label class="control-label" for="apartmentType">type</label>
+                            <div class="input-group">
+                              
+                                <span class="input-group-addon">
+                                    <i class="fa fa-eye"></i>
+                                </span>
+                                <div class="form-control">
+                                    <ng-container  *ngFor='let value of apartmentTypes;let intIndex = index;'>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="apartmentType" formControlName="apartmentType" value={{intIndex}}
+                                                [checked]="apartment && apartment.apartmentType==intIndex">{{value}}
+                                        </label>
+                                    </ng-container>
+                                </div>
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': apartmentForm.controls.apartmentType.valid,'glyphicon-remove':!apartmentForm.controls.apartmentType.valid}"></span>
+                            </div>
+                            <div *ngIf="apartmentForm.controls.apartmentType.hasError('required')" class="alert alert-danger ">You must select the type.</div>
+                            
+                        </div>
+
+                        
+
+
+                        <button type="submit" class="btn btn-success" (click)="saveApartment()" [disabled]="!apartmentForm.valid" [style.display]="'none'">Book</button> 
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button *ngIf="originalApartmentName!=null" type="button" class="pull-left btn btn-danger" (click)="removeApartment()">Remove Apartment</button>
+            <button type="button" class="btn btn-default" (click)="hide()">Cancel</button>
+            <button type="submit" class="btn btn-success" (click)="saveApartment()" [disabled]="!apartmentForm.valid">Save</button>
+        </div>
+      </div>
+    </div>

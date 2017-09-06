@@ -1,0 +1,80 @@
+<div class="container-fluid">
+    <div class="col-sm-3 col-md-2 ">
+        <div *ngIf="checkInOuts" class="panel panel-primary">
+            <div class="panel-heading">
+                Check in/out info <button class="btn btn-info btn-xs pull-right">+ info</button>
+            </div>
+             <div class="panel-body">
+                <ul class="list-unstyled" id="checkinoutInfoDiv">
+                    <li > 
+                        <span class="list-group-item-text"><strong>Yesterday</strong></span>
+                        <span class="pull-right"> in <span class="label label-success">{{checkInOuts.CheckIn.Yesterday.length}}</span> 
+                                                out <span class="label label-warning">{{checkInOuts.CheckOut.Yesterday.length}}</span>
+                        </span>
+                    </li>
+                    <li >
+                        <span class="list-group-item-text"><strong>Today</strong></span>
+                        <span class="pull-right"> in <span class="label label-success">{{checkInOuts.CheckIn.Today.length}}</span> 
+                                                out <span class="label label-warning">{{checkInOuts.CheckOut.Today.length}}</span>
+                        </span>
+                    </li>
+                    <li >
+                        <span class="list-group-item-text"><strong>+5 days</strong></span>
+                        <span class="pull-right"> in <span class="label label-success">{{checkInOuts.CheckIn.NextDays.length}}</span> 
+                                                out <span class="label label-warning">{{checkInOuts.CheckOut.NextDays.length}}</span>
+                        </span>
+                    </li>
+                </ul>
+             </div>
+        </div>
+        <nav class="hidden-xs-down bg-faded sidebar">
+            <div class="nav nav-pills flex-column list-group">
+                    <a routerLink="/apartments/all" routerLinkActive="active"  class="list-group-item list-group-item-action">
+                        <h4 class="list-group-item-heading">All apartments
+                            <button class="pull-right btn-info btn btn-xs " (click)="newApartment()"
+                                rel="tooltip" data-toggle="tooltip" data-html="true" 
+                                data-title="Add">
+                                     +
+                                     <span  class="glyphicon glyphicon glyphicon-home" ></span>
+                            </button>
+                        </h4>
+                        <p class="list-group-item-text">	
+                            <span class="label label-danger">June $0 0%</span>
+                            <span class="label label-success">July $9999 60%</span>
+
+                        </p>
+                                
+                    </a>
+
+
+                    <a routerLink="/apartments/{{apartment.name}}" routerLinkActive="active"  class="list-group-item list-group-item-action " *ngFor='let apartment of apartments | async ; let i = index'> 
+                    <h4 class="list-group-item-heading"><strong>{{apartment.name}}</strong>
+                            
+                        <small><span class="pull-right label label-info">{{apartment.numBedroom}} BR, {{apartment.floor}}st Floor, {{apartment.typeDesc()}}</span></small></h4>
+                        <p class="list-group-item-text">	
+                            <span class="label"
+                                [ngClass]="{'label-danger':apartment.MonthSales[currentYYYYMM]<warningPrice,
+                                                'label-warning':apartment.MonthSales[currentYYYYMM]>=warningPrice &&
+                                                                apartment.MonthSales[currentYYYYMM] <=successPrice,
+                                                'label-success':apartment.MonthSales[currentYYYYMM] >successPrice}">
+                            {{currentMonthName}} ${{apartment.MonthSales[currentYYYYMM] | number:'1.0-2'}} 
+                            {{apartment.MonthOccupancy[currentYYYYMM] | number:'1.0-0' }}%</span>
+                            <span class="label"
+                                [ngClass]="{'label-danger':apartment.MonthSales[nextYYYYMM]<warningPrice,
+                                                'label-warning':apartment.MonthSales[nextYYYYMM]>=warningPrice &&
+                                                                apartment.MonthSales[nextYYYYMM] <=successPrice,
+                                                'label-success':apartment.MonthSales[nextYYYYMM] >successPrice}">
+                            {{nextMonthName}} ${{apartment.MonthSales[nextYYYYMM] | number:'1.0-2'}} 
+                            {{apartment.MonthOccupancy[nextYYYYMM] | number:'1.0-0'}}%</span>
+                        </p>
+                    </a>
+                    
+
+            </div>
+        </nav>
+    </div>
+    <apartment-edit></apartment-edit>
+    <main class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 pt-3">
+        <router-outlet></router-outlet>
+    </main>
+</div>

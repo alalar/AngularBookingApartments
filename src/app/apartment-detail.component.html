@@ -1,0 +1,128 @@
+        <div *ngIf="apartment" class="panel panel-primary">
+            <div class="panel-heading">
+                <strong>Apartment {{apartment.name}} </strong>
+                <span class="label label-info">{{apartment.numBedroom}} Bedrooms</span>
+                <span class="label label-info">{{apartment.typeDesc()}}</span>
+                <span class="label label-info">{{apartment.floor}}st Floor</span>
+                <button class="pull-right btn-info btn btn-xs " (click)="editApartment()" 
+                        rel="tooltip" data-toggle="tooltip" data-html="true" 
+                        data-title="Edit">
+                    <span  class="glyphicon glyphicon glyphicon-pencil" ></span>
+                </button>
+            </div>
+            <div class="panel-body">
+                <app-calendar *ngIf="apartment" #calendarView [apartments]="[]" [bookings]="apartment.bookings"  (onSelected)="onSelected($event)" (removePeriod)="removePeriod($event)"></app-calendar>
+            </div>
+        </div>
+<apartment-edit *ngIf="apartment"></apartment-edit>        
+        
+<div (click)="onContainerClicked($event)" class="modal fade " tabindex="-1" [ngClass]="{'in': visibleAnimate,'out': !visibleAnimate}"
+       [ngStyle]="{'display': visible ? 'block' : 'none'}">
+    <div class="modal-dialog">
+      <div class="modal-content" >
+        <div class="modal-header" >
+          <button type="button" class="close" data-dismiss="modal" (click)="hide()">&times;</button>  
+        </div>
+        <div class="modal-body">
+            <div class="panel panel-primary">
+                
+                <div class="panel-heading">
+                    <span *ngIf="removePeriodIndex!=null">Update</span>
+                    <span *ngIf="removePeriodIndex==null">Complete</span>
+                    <span>
+                        booking from
+                    <strong> {{selectedPeriod.from.toLocaleDateString(this.localLanguage,{day:'numeric',month:'long',year:'numeric'})}} </strong> 
+                    to 
+                    <strong> {{selectedPeriod.to.toLocaleDateString(this.localLanguage,{day:'numeric',month:'long',year:'numeric'})}} </strong>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <form [formGroup]="bookingForm" (submit)="confirmBooking()" novalidate >
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': bookingForm.controls.name.valid,'has-error':!bookingForm.controls.name.valid}">
+                            <label class="control-label" for="name">Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon glyphicon-user" ></span>
+                                </span>
+                                
+                                <input class="form-control" formControlName="name" placeholder="enter a name" autofocus>
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': bookingForm.controls.name.valid,'glyphicon-remove':!bookingForm.controls.name.valid}"></span>
+                            </div>
+                            <div *ngIf="bookingForm.controls.name.hasError('required')" class="alert alert-danger ">You must include a username.</div>
+                            <div *ngIf="bookingForm.controls.name.hasError('minlength')" class="alert alert-danger ">Name must be at least 5 characters long.</div>
+                            <div *ngIf="bookingForm.controls.name.hasError('maxlength')" class="alert alert-danger ">Name cannot exceed 100 characters.</div>                
+                        </div>
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': bookingForm.controls.address.valid,'has-error':!bookingForm.controls.address.valid }">
+                            <label class="control-label" for="address">address</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon glyphicon-road" ></span>
+                                </span>
+                                <input class="form-control" formControlName="address" placeholder="enter an address">
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': bookingForm.controls.address.valid,'glyphicon-remove':!bookingForm.controls.address.valid}"></span>
+                            </div>
+                            <!-- The hasError method can work with the built in validators but custom validators as well -->
+                            <div *ngIf="bookingForm.controls.address.hasError('required')" class="alert alert-danger ">You must include an address.</div>
+                        </div> 
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': bookingForm.controls.city.valid,'has-error':!bookingForm.controls.city.valid}">
+                            <label class="control-label" for="city">city</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon glyphicon-map-marker" ></span>
+                                </span>
+                                <input class="form-control" formControlName="city" placeholder="enter a city">
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': bookingForm.controls.city.valid,'glyphicon-remove':!bookingForm.controls.city.valid}"></span>
+                            </div>
+                            <!-- The hasError method can work with the built in validators but custom validators as well -->
+                            <div *ngIf="bookingForm.controls.city.hasError('required')" class="alert alert-danger ">You must include a city.</div>
+                        </div>   
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': bookingForm.controls.phone.valid,'has-error':!bookingForm.controls.phone.valid}">
+                            <label class="control-label" for="phone">phone</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon glyphicon-phone" ></span>
+                                </span>
+                                <input class="form-control" formControlName="phone" placeholder="enter a phone number">
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': bookingForm.controls.phone.valid,'glyphicon-remove':!bookingForm.controls.phone.valid}"></span>
+                            </div>
+                            <!-- The hasError method can work with the built in validators but custom validators as well -->
+                            <div *ngIf="bookingForm.controls.phone.hasError('required')" class="alert alert-danger ">You must include a phone number.</div>
+                            <div *ngIf="bookingForm.controls.phone.hasError('pattern') && bookingForm.controls.phone.value" class="alert alert-danger ">Phone number is made of 9 to 15 digits</div>
+                        </div>                     
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': bookingForm.controls.email.valid,'has-error':!bookingForm.controls.email.valid}">
+                            <label class="control-label" for="email">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    @
+                                </span>
+                                <input class="form-control" formControlName="email" placeholder="enter an email">
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': bookingForm.controls.email.valid,'glyphicon-remove':!bookingForm.controls.email.valid}"></span>
+                            </div>
+                            <div *ngIf="bookingForm.controls.email.hasError('required')" class="alert alert-danger ">You must include a user email.</div>
+                            <div *ngIf="bookingForm.controls.email.hasError('email') && bookingForm.controls.email.value" class="alert alert-danger ">User email is not valid</div>
+                        </div> 
+                        <div class="form-group has-feedback" [ngClass]="{'has-success': bookingForm.controls.price.valid,'has-error':!bookingForm.controls.price.valid}">
+                            <label class="control-label" for="price">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    $
+                                </span>
+                                <input class="form-control" formControlName="price" placeholder="enter a price">
+                                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-ok': bookingForm.controls.price.valid,'glyphicon-remove':!bookingForm.controls.price.valid}"></span>
+                            </div>
+                            <div *ngIf="bookingForm.controls.price.hasError('required')" class="alert alert-danger ">You must include a price.</div>
+                            <div *ngIf="bookingForm.controls.price.hasError('pattern') && bookingForm.controls.price.value" class="alert alert-danger ">Price must be up to 8 digits and 2 decimals</div>
+                        </div>
+                        <button type="submit" class="btn btn-success" (click)="confirmBooking()" [disabled]="!bookingForm.valid" [style.display]="'none'">Book</button> 
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button *ngIf="removePeriodIndex!=null" type="button" class="pull-left btn btn-danger" (click)="removeBooking()">Remove Booking</button>
+            <button type="button" class="btn btn-default" (click)="hide()">Cancel</button>
+            <button type="submit" class="btn btn-success" (click)="confirmBooking()" [disabled]="!bookingForm.valid">Book</button>
+        </div>
+      </div>
+    </div>
+  <app-modal></app-modal>

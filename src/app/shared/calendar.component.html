@@ -1,0 +1,184 @@
+<style>
+    th {
+        text-align: center;
+    }
+    .table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, 
+    .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th { 
+        padding: 0px;
+        line-height: 15px;
+        padding:0px;
+        margin:0px;
+        border:0px;
+    }
+    .progress, .table {
+        margin-bottom: 0px; 
+    }
+    .progress {
+     /*  height: 16px; */
+    }
+    tfoot > tr > th  {
+        margin:10px;
+    }
+    tfoot > tr > th > span, .progress-bar {
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    th > button, td > button {
+        border: 0px;
+        padding: 0px
+    }
+    .fromDate {
+        border-radius: 100px 0px 0px 100px;
+    }
+    .toDate {
+        border-radius: 0px 100px 100px 0px;
+    }
+    .fromToDate {
+        border-radius: 20px 20px 20px 20px
+    }
+    .specialDate {
+       background: rgba(255, 0, 0, 0.32); 
+    }
+    .specialDate>button {
+        color: #FFFFFF;
+    }
+    .selectedDate {
+        background: #3a88c1;
+        }
+    .selectedDate>button {
+        color: #FFFFFF;
+    }
+    .warningDay {
+        background: rgba(255, 176, 55, 0.53);
+        color: #FFFFFF;
+    }
+    .alertDay {
+        background: rgba(255, 0, 0, 0.32);
+        color: #FFFFFF;
+    }
+    .successDay {
+        background: rgba(7, 255, 0, 0.35);
+        color: #FFFFFF;
+    }
+    .warningDay>button , .alertDay>button, .successDay>button{
+        color: #FFFFFF;
+    }
+    .totalInfo {
+        width:75%;
+        border-radius:10px;
+    }                                                    
+
+    .btn-link {
+        outline: none;
+        text-decoration: none;
+        }
+
+</style>
+  <div class="row">
+    <div id="ApartmentSalesOccupancy" style="height:150px;"></div>
+    <div *ngIf="selectedFromDay!=null" class="col text-center bg-info">
+      <span>From <strong>{{TransformFromYYYYMMDDToString(selectedFromDay)}}</strong> To <strong>{{TransformFromYYYYMMDDToString(selectedToDay)}}</strong></span>
+      <button class="btn btn-success btn-xs" (click)="doBooking()" [disabled]="selectedFromDay==null || selectedToDay==null">Book</button>
+      <button  class="btn btn-danger btn-xs" (click)="resetCalendar()">cancel</button>
+    </div>
+    <div *ngIf="apartmentsInfo && apartmentsInfo.apartments.length>0" class="col text-center bg-info">
+        <span>calendar day colour legend: </span>
+      <span class="label label-danger">< {{warningPercentage}}%</span>  
+      <span class="label label-warning">< {{successPercentage}}%</span>  
+      <span class="label label-success">> {{successPercentage}}%</span>  
+    </div>
+  <div class="row">
+        <ng-container *ngFor='let monthCalendar of monthCalendars ; let intCalendar = index'>
+            <div  class="col-xs-6 col-sm-6 col-md-4 col-lg-3 table-responsive" 
+                [ngClass] = "{'hidden-md':intCalendar>5, 
+                              'hidden-sm':intCalendar>3,
+                              'hidden-xs':intCalendar>1}">
+                <table  class="table table-condensed" cellpadding="0" cellspacing="0" data-year=' + year + ' data-month='+ month + '> 
+                    <thead>	
+                        <tr>
+                            <th ><button *ngIf="intCalendar==0" class="btn-block btn-link" title="before" (click)="monthBefore()"><span class="glyphicon glyphicon-chevron-left "></span></button></th>
+                            <th colspan=5 class="text-center"><span>{{monthCalendar.monthNameDate}} {{monthCalendar.yyyyDate}}</span></th>    
+                            <th ><button *ngIf="intCalendar>0 && intCalendar<4" class="btn-block btn-link btn-xs" 
+                                [ngClass] = "{'hidden-xl':intCalendar!=3,
+                                            'hidden-lg':intCalendar!=3, 
+                                            'hidden-md':intCalendar!=2,
+                                            'hidden-sm':intCalendar!=1,
+                                            'hidden-xs':intCalendar!=1
+                                            }"
+                                title="next" (click)="monthNext()"><span class="glyphicon glyphicon-chevron-right "></span></button></th>
+                        </tr>
+                        <tr>	
+                            <th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th>	
+                        </tr>	
+                    </thead>	
+                    <tbody (mouseout)="overDay==0">	
+                        <tr *ngFor='let weekdays of monthCalendar.calendarDays'>
+                            <td *ngFor='let day of weekdays'  class="text-center" 
+                                    
+                                    [ngClass]="{'specialDate':(apartments.length<1) && day.dayValue>0,
+                                                'selectedDate':day.mmDate==monthCalendar.mmDate && (
+                                                selectedFromDay==null?false:
+                                                (selectedToDay==null?selectedFromDay==day.yyyymmddDate || (day.yyyymmddDate>=selectedFromDay && day.yyyymmddDate<=overDay)
+                                                :day.yyyymmddDate>=selectedFromDay && day.yyyymmddDate<=selectedToDay))
+                                                && (nextSpecialDay==null || nextSpecialDay>=day.yyyymmddDate),
+                                                'fromDate': (day.initialPeriod && selectedToDay!=day.yyyymmddDate) || day.yyyymmddDate==selectedFromDay,
+                                                'fromToDate' :  (day.yyyymmddDate==selectedFromDay && (selectedToDay==null && day.yyyymmddDate==overDay)),
+                                                'toDate': (day.finalPeriod && day.yyyymmddDate!=selectedFromDay) || (selectedFromDay==null?false:(selectedToDay!=null?day.yyyymmddDate==selectedToDay:day.yyyymmddDate==overDay && overDay>=selectedFromDay && (day.dayValue==0 || nextSpecialDay==day.yyyymmddDate)))
+                                                 }"
+                                    (mouseover) = "overTableCell(day.yyyymmddDate)" (mouseout)="overTableCell(0)" 
+                                   
+                                >
+                                <button *ngIf="day.mmDate==monthCalendar.mmDate" class="btn-block btn-link"
+                                    [ngClass] = "{'warningDay': day.dayValue>=warningPercentage && apartments.length>0,
+                                                'alertDay': day.dayValue<warningPercentage && apartments.length>0,
+                                                'successDay': day.dayValue>successPercentage && apartments.length>0,
+                                                'totalInfo':apartments.length>0}"
+                                    (click)="((!day.finalPeriod && day.dayValue>0 && nextSpecialDay!=day.yyyymmddDate))
+                                        ?removeCalendarPeriod(day.yyyymmddDate):clickOnCalendarDay(day.yyyymmddDate)"
+                                    rel="tooltip" data-toggle="tooltip" data-html="true" 
+                                    data-title="{{day.tooltip!=''?day.tooltip:apartmentsInfo && apartmentsInfo.apartments.length>0?
+                                            NoTooltipInfoInTotals:''}}"
+                                    >
+                                        <span >{{day.ddDate}}</span>
+                                </button>
+                                <span *ngIf="day.mmDate!=monthCalendar.mmDate"> &nbsp;</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan=3 class="text-center"  rel="tooltip" data-toggle="tooltip" data-html="true" 
+                                    data-title="total income per month">
+                                <span class="label"  
+                                    [ngClass]="{'label-danger':(monthCalendar.totalMonthPrice / (apartments.length>0?apartments.length:1))<warningPrice,
+                                                'label-warning':(monthCalendar.totalMonthPrice / (apartments.length>0?apartments.length:1))>=warningPrice &&
+                                                                (monthCalendar.totalMonthPrice / (apartments.length>0?apartments.length:1)) <=successPrice,
+                                                'label-success':(monthCalendar.totalMonthPrice / (apartments.length>0?apartments.length:1))>successPrice}">
+                                                ${{monthCalendar.totalMonthPrice | number:'1.0-2'}}</span>
+                            </th>
+                            <th colspan=4 class="text-center" rel="tooltip" data-toggle="tooltip" data-html="true" 
+                                    data-title="occupancy rate per month">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"  
+                                    [ngClass]="{'progress-bar-danger':monthCalendar.totalMonthValue<warningPercentage,
+                                                'progress-bar-warning':monthCalendar.totalMonthValue>=warningPercentage && 
+                                                                        monthCalendar.totalMonthValue<=successPercentage,
+                                                'progress-bar-success':monthCalendar.totalMonthValue>successPercentage}"
+                                    [ngStyle]="{'width': monthCalendar.totalMonthValue + '%'}"
+                                        aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="min-width:2em">
+                                            <span>{{monthCalendar.totalMonthValue | number:'1.0'}}%</span>
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                        
+                    </tfoot>
+                </table>
+            </div>
+            <div *ngIf="((intCalendar+1)%2)==0" class="clearfix visible-xs visible-sm"></div>
+            <div *ngIf="((intCalendar+1)%3)==0" class="clearfix visible-md "></div>
+            <div *ngIf="((intCalendar+1)%4)==0" class="clearfix visible-lg"></div>
+        </ng-container>
+    </div>
+
