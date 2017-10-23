@@ -1,0 +1,97 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Check in/out of the apartments
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <span class="col-sm-12 text-center"><strong>Yesterday</strong></span>
+            <hr />
+            <ul class="col-md-6 list-unstyled">
+                <li> <i class="fa fa-hand-o-left" aria-hidden="true"></i> <span>Check-in</span>
+                <li *ngFor='let checkin of checkInOuts.CheckIn.Yesterday'>
+                    <i class="fa fa-home"></i><strong><a routerLink="/apartments/{{checkin.ApartmentName}}">{{checkin.ApartmentName}}</a></strong> 
+                    <span>from <strong>{{checkin.Booking.fromDate | date: 'dd/MM/yyyy'}}</strong> to {{checkin.Booking.toDate | date: 'dd/MM/yyyy'}}  ${{checkin.Booking.price}}</span>
+                    <p>
+                    <span class="glyphicon glyphicon glyphicon-user" ></span><strong>{{checkin.Booking.user.name}}</strong> 
+                    <span class="glyphicon glyphicon glyphicon-phone" ></span>{{checkin.Booking.user.phone}} 
+                    <a href="mailto:#">{{checkin.Booking.user.email}}</a>
+                    {{checkin.Booking.user.city}}
+                </li>
+                <li *ngIf="checkInOuts.CheckIn.Yesterday.length<1"><i>No users</i></li>
+            </ul>
+            <ul class="col-md-6 uns list-unstyled">
+                <li> <i class="fa fa-hand-o-right" aria-hidden="true"></i> <span> Check-out</span>
+                <li *ngFor='let checkin of checkInOuts.CheckOut.Yesterday'>
+         n           <i class="fa fa-home"></i><strong><a routerLink="/apartments/{{checkin.ApartmentName}}">{{checkin.ApartmentName}}</a></strong> 
+                    <span>from {{checkin.Booking.fromDate | date: 'dd/MM/yyyy'}} to <strong>{{checkin.Booking.toDate | date: 'dd/MM/yyyy'}}</strong>  ${{checkin.Booking.price}}</span>
+                    <p>
+                    <span class="glyphicon glyphicon glyphicon-user" ></span><strong>{{checkin.Booking.user.name}}</strong> 
+                    <span class="glyphicon glyphicon glyphicon-phone" ></span>{{checkin.Booking.user.phone}} 
+                    <a href="mailto:#">{{checkin.Booking.user.email}}</a>
+                    {{checkin.Booking.user.city}}
+                </li>
+                <li *ngIf="checkInOuts.CheckOut.Yesterday.length<1"><i>No users</i></li>
+            </ul>
+        </div>
+        <div class="row">
+            <span class="col-sm-12 text-center"><strong>Today</strong></span>
+            <hr />
+            <ul class="col-md-6 list-unstyled">
+                <li> <i class="fa fa-hand-o-left" aria-hidden="true"></i> <span>Check-in</span>
+                <li *ngFor='let checkin of checkInOuts.CheckIn.Today'>
+                    <i class="fa fa-home"></i><strong><a routerLink="/apartments/{{checkin.ApartmentName}}">{{checkin.ApartmentName}}</a></strong> 
+                    <span>from <strong>{{checkin.Booking.fromDate | date: 'dd/MM/yyyy'}}</strong> to {{checkin.Booking.toDate | date: 'dd/MM/yyyy'}}  ${{checkin.Booking.price}}</span>
+                    <p>
+                    <span class="glyphicon glyphicon glyphicon-user" ></span><strong>{{checkin.Booking.user.name}}</strong> 
+                    <span class="glyphicon glyphicon glyphicon-phone" ></span>{{checkin.Booking.user.phone}} 
+                    <a href="mailto:#">{{checkin.Booking.user.email}}</a>
+                    {{checkin.Booking.user.city}}
+                </li>
+                <li *ngIf="checkInOuts.CheckIn.Today.length<1"><i>No users</i></li>
+            </ul>
+            <ul class="col-md-6 uns list-unstyled">
+                <li> <i class="fa fa-hand-o-right" aria-hidden="true"></i> <span> Check-out</span>
+                <li *ngFor='let checkin of checkInOuts.CheckOut.Today'>
+                    <i class="fa fa-home"></i><strong><a routerLink="/apartments/{{checkin.ApartmentName}}">{{checkin.ApartmentName}}</a></strong> 
+                    <span>from {{checkin.Booking.fromDate | date: 'dd/MM/yyyy'}} to <strong>{{checkin.Booking.toDate | date: 'dd/MM/yyyy'}}</strong>  ${{checkin.Booking.price}}</span>
+                    <p>
+                    <span class="glyphicon glyphicon glyphicon-user" ></span><strong>{{checkin.Booking.user.name}}</strong> 
+                    <span class="glyphicon glyphicon glyphicon-phone" ></span>{{checkin.Booking.user.phone}} 
+                    <a href="mailto:#">{{checkin.Booking.user.email}}</a>
+                    {{checkin.Booking.user.city}}
+                </li>
+                <li *ngIf="checkInOuts.CheckOut.Today.length<1"><i>No users</i></li>
+            </ul>
+        </div>
+        <div class="row">
+            <span class="col-sm-12 text-center"><strong>Next 5 days</strong></span>
+            <hr />
+            <ul class="col-md-6 list-unstyled">
+                <li> <i class="fa fa-hand-o-left" aria-hidden="true"></i> <span>Check-in</span>
+                <li *ngFor='let checkin of checkInOuts.CheckIn.NextDays'>
+                    <i class="fa fa-home"></i><strong><a routerLink="/apartments/{{checkin.ApartmentName}}">{{checkin.ApartmentName}}</a></strong> 
+                    <span>from <strong>{{checkin.Booking.fromDate | date: 'dd/MM/yyyy'}}</strong> to {{checkin.Booking.toDate | date: 'dd/MM/yyyy'}} ${{checkin.Booking.price}}</span>
+                    <p>
+                    <span class="glyphicon glyphicon glyphicon-user" ></span><strong>{{checkin.Booking.user.name}}</strong> 
+                    <span class="glyphicon glyphicon glyphicon-phone" ></span>{{checkin.Booking.user.phone}} 
+                    <a href="mailto:#">{{checkin.Booking.user.email}}</a>
+                    {{checkin.Booking.user.city}}
+                </li>
+                <li *ngIf="checkInOuts.CheckIn.NextDays.length<1"><i>No users</i></li>
+            </ul>
+            <ul class="col-md-6 uns list-unstyled">
+                <li> <i class="fa fa-hand-o-right" aria-hidden="true"></i> <span> Check-out</span>
+                <li *ngFor='let checkin of checkInOuts.CheckOut.NextDays'>
+                    <i class="fa fa-home"></i><strong><a routerLink="/apartments/{{checkin.ApartmentName}}">{{checkin.ApartmentName}}</a></strong> 
+                    <span>from {{checkin.Booking.fromDate | date: 'dd/MM/yyyy'}} to <strong>{{checkin.Booking.toDate | date: 'dd/MM/yyyy'}}</strong>  ${{checkin.Booking.price}}</span>
+                    <p>
+                    <span class="glyphicon glyphicon glyphicon-user" ></span><strong>{{checkin.Booking.user.name}}</strong> 
+                    <span class="glyphicon glyphicon glyphicon-phone" ></span>{{checkin.Booking.user.phone}} 
+                    <a href="mailto:#">{{checkin.Booking.user.email}}</a>
+                    {{checkin.Booking.user.city}}
+                </li>
+                <li *ngIf="checkInOuts.CheckOut.NextDays.length<1"><i>No users</i></li>
+            </ul>
+        </div>
+    </div>
+</div>

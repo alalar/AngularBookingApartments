@@ -26,7 +26,7 @@ const appRoutes: Routes = [
   ],
   imports: [
     ApartmentsModule,
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, { useHash: true }),
     BrowserModule,
     HttpModule
   ],
